@@ -1,7 +1,7 @@
-/*CREATE DATABASE expotec_aamam;
-USE expotec_aamam;*/
+CREATE DATABASE expotec_aamam;
+USE expotec_aamam;
 
-/*CREATE TABLE usuarios (
+CREATE TABLE usuarios (
 id_usuario INT AUTO_INCREMENT PRIMARY KEY,
 nome_usuario VARCHAR(100) NOT NULL,
 dt_nasc_usuario DATE,
@@ -37,26 +37,26 @@ nome_contato VARCHAR(100) NOT NULL,
 telefone_contato VARCHAR(15),
 parentesco VARCHAR(50),
 fk_ce_usuario INT);
-*/
 
-/*ALTER TABLE contato_emergencia ADD CONSTRAINT FOREIGN KEY (fk_ce_usuario)
+
+ALTER TABLE contato_emergencia ADD CONSTRAINT FOREIGN KEY (fk_ce_usuario)
 REFERENCES usuarios(id_usuario);*/
 
-/*ALTER TABLE tratamentos ADD CONSTRAINT FOREIGN KEY (fk_tratamento_remedios)
-REFERENCES remedios(id_remedio);*/
+ALTER TABLE tratamentos ADD CONSTRAINT FOREIGN KEY (fk_tratamento_remedios)
+REFERENCES remedios(id_remedio);
 
-/*ALTER TABLE tratamentos ADD FOREIGN KEY (fk_tratamento_usuarios)
-REFERENCES usuarios(id_usuario);*/
+ALTER TABLE tratamentos ADD FOREIGN KEY (fk_tratamento_usuarios)
+REFERENCES usuarios(id_usuario);
 
-/*ALTER TABLE tratamentos ADD inicio_tratamento DATETIME AFTER tipo_tratamento;*/
-/*ALTER TABLE remedios CHANGE horario_remedio horario_remedio VARCHAR(50);*/
-/*ALTER TABLE remedios CHANGE horario_remedio horario_remedio VARCHAR(150);*/
-/*ALTER TABLE remedios CHANGE tipo_remedio tipo_remedio VARCHAR(150);*/
-/*ALTER TABLE remedios CHANGE dosagem_remedio dosagem_remedio VARCHAR(150);*/
-/*ALTER TABLE tratamentos CHANGE descricao_tratamento descricao_tratamento VARCHAR(650);*/
-/*ALTER TABLE tratamentos CHANGE duracao_tratamento duracao_tratamento VARCHAR(100);*/
+ALTER TABLE tratamentos ADD inicio_tratamento DATETIME AFTER tipo_tratamento;
+ALTER TABLE remedios CHANGE horario_remedio horario_remedio VARCHAR(50);
+ALTER TABLE remedios CHANGE horario_remedio horario_remedio VARCHAR(150);
+ALTER TABLE remedios CHANGE tipo_remedio tipo_remedio VARCHAR(150);
+ALTER TABLE remedios CHANGE dosagem_remedio dosagem_remedio VARCHAR(150);
+ALTER TABLE tratamentos CHANGE descricao_tratamento descricao_tratamento VARCHAR(650);
+ALTER TABLE tratamentos CHANGE duracao_tratamento duracao_tratamento VARCHAR(100);
 
-/*INSERT INTO usuarios (nome_usuario, dt_nasc_usuario, email_usuario, data_cadastro_usuario, usuario_ativo, genero_usuario) VALUES
+INSERT INTO usuarios (nome_usuario, dt_nasc_usuario, email_usuario, data_cadastro_usuario, usuario_ativo, genero_usuario) VALUES
 ('João Silva', '2000-01-10', 'joao2000@gmail.com', '2025-01-11', 1 , 'Masculino'),
 ('Gabriel Toledo', '2000-01-11', 'gabriel2000@gmail.com', '2026-01-11',0, 'Masculino'),
 ('Hildeu Alves', '1964-01-12', 'hildeu1964@gmail.com', '2026-01-12', 1 , 'Masculino'),
@@ -66,9 +66,9 @@ REFERENCES usuarios(id_usuario);*/
 ('Vera Sonia' , '1968-01-16', 'vera1968@gmail.com', '2026-01-16', 1 , 'Feminino'),
 ('Claudia Leite', '1969-01-17', 'claudia1969@gmail.com', '2026-01-16', 1 , 'Feminino'),
 ('Beatriz Santos', '2000-01-18', 'beatriz2000@gmail.com', '2026-01-17', 0 , 'Feminino'),
-('Ana Carolina', '2000-01-19', 'anacarolina2000@gmail.com', '2026-01-18', 1 , 'Feminino');*/
+('Ana Carolina', '2000-01-19', 'anacarolina2000@gmail.com', '2026-01-18', 1 , 'Feminino');
 
-/*
+
 INSERT INTO remedios (nome_remedio, descricao_remedio, dosagem_remedio, horario_remedio, tipo_remedio) VALUES
 ('Dipirona Monohidratada','analgésico e antitérmico comumente utilizado para aliviar dores de cabeça, dores em geral e reduzir a febre, agindo na redução da dor e da temperatura corporal. Consulte um médico para orientações.',
 '500mg' ,  'De 8 em 8 Horas', 'medicamento analgésico e antitérmico ; não-opioides'),
@@ -99,7 +99,7 @@ INSERT INTO remedios (nome_remedio, descricao_remedio, dosagem_remedio, horario_
 
 ('Pimecrolino','medicamento de uso tópico (creme) não corticoide, indicado para tratar eczema ou dermatite atópica. Inibidor da calcineurina, age reduzindo a inflamação, vermelhidão e coceira na pele',
 'Aplicar 2 vezes ao dia', 'Aplicar uma fina camada de Pimecrolimo na pele afetada duas vezes ao dia e friccionar suave e completamente.', 'remédio de uso tópico (creme) indicado principalmente para o tratamento de eczema e dermatite atópica (leve a moderada)');
-*/
+
 
 /*SELECT * FROM remedios;*/
 /*SELECT * FROM usuarios;*/
