@@ -36,7 +36,7 @@ id_contato INT AUTO_INCREMENT PRIMARY KEY,
 nome_contato VARCHAR(100) NOT NULL,
 telefone_contato VARCHAR(15),
 parentesco VARCHAR(50),
-fk_ce_usuario INT
+fk_ce_usuario INT);
 */
 
 /*ALTER TABLE contato_emergencia ADD CONSTRAINT FOREIGN KEY (fk_ce_usuario)
