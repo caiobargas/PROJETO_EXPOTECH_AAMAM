@@ -775,15 +775,69 @@ def atualizar_tratamento(conexao):
         print("Não foi possível atualizar o tratamento.")
 
 
-def excluir_tratamento(conexao, id_tratamento):
+def excluir_tratamento(conexao):
+
     cursor = conexao.cursor()
 
-    cursor.execute(
-        "DELETE FROM tratamentos WHERE id_tratamento = %s", (id_tratamento,))
+    # Lista os tratamentos cadastrados
+    cursor.execute("""
+        SELECT tratamentos.id_tratamento, tratamentos.nome_tratamento, tratamentos.tipo_tratamento, 
+                remedios.id_remedio, remedios.nome_remedio
+        FROM tratamentos
+        INNER JOIN remedios ON tratamentos.fk_tratamento_remedios = remedios.id_remedio
+        INNER JOIN usuarios ON tratamentos.fk_tratamento_usuarios = usuarios.id_usuario
+    """)
 
-    conexao.commit()
+    tratamentos = cursor.fetchall()
+    print("\n=== TRATAMENTOS CADASTRADOS ===")
 
-    print(f"Tratamento com ID {id_tratamento} excluído com sucesso.")
+    if not tratamentos:
+        print("Nenhum tratamento cadastrado.")
+        return
+
+    for tratamento in tratamentos:
+        print(
+            f"ID: {tratamento[0]} - Nome: {tratamento[1]} - Tipo: {tratamento[2]} - Remédio: {tratamento[4]} (ID: {tratamento[3]})")
+
+    # Solicita o ID do tratamento
+    id_tratamento = int(
+        input("\nDigite o ID do tratamento que deseja excluir: "))
+
+    # Verifica se existe remédio vinculado ao tratamento
+    cursor.execute("""
+        SELECT fk_tratamento_remedios, fk_tratamento_usuarios
+        FROM tratamentos
+        WHERE id_tratamento = %s
+    """, (id_tratamento,))
+
+    resultado = cursor.fetchone()
+
+    if resultado is None:
+        print("Tratamento não encontrado.")
+        return
+
+    # Se houver remédio ou usuário vinculado, não permite excluir
+    if resultado[0] is not None or resultado[1] is not None:
+        print("Não é possível excluir este tratamento.")
+        print("Existe um remédio ou um usuário vinculado a este tratamento.")
+        return
+
+    # Exclui o tratamento
+    try:
+        cursor.execute("""
+            DELETE FROM tratamentos
+            WHERE id_tratamento = %s
+        """, (id_tratamento,))
+
+        conexao.commit()
+
+        print("Tratamento excluído com sucesso!")
+
+    except Exception as erro:
+        print(f"Erro ao excluir tratamento: {erro}")
+
+    finally:
+        cursor.close()
 
 
 # =========================
@@ -823,6 +877,7 @@ try:
             print('3 - Remédios')
             print('4 - Tratamentos')
             print('5 - Contatos de Emergência')
+            print('6 - Voltar para o menu principal')
 
             escolha = input('\nEscolha uma opção: ')
 
@@ -841,6 +896,8 @@ try:
             elif escolha == '5':
                 listar_contatoemergencia(conexao)
 
+            elif escolha == '6':
+                continue
             else:
                 print('Opção inválida.')
 
@@ -854,6 +911,7 @@ try:
             print('2 - Remédios')
             print('3 - Tratamentos')
             print('4 - Contatos de Emergência')
+            print('5 - Voltar para o menu principal')
 
             escolha = input('\nEscolha uma opção: ')
 
@@ -869,6 +927,9 @@ try:
             elif escolha == '4':
                 adicionar_contatoemergencia(conexao)
 
+            elif escolha == '5':
+                continue
+
             else:
                 print('Opção inválida.')
 
@@ -882,7 +943,7 @@ try:
             print('2 - Remédios')
             print('3 - Tratamentos')
             print('4 - Contatos de Emergência')
-
+            print('5 - Voltar para o menu principal')
             escolha = input('\nEscolha uma opção: ')
 
             if escolha == '1':
@@ -897,6 +958,9 @@ try:
             elif escolha == '4':
                 atualizar_contatoemergencia(conexao)
 
+            elif escolha == '5':
+                continue
+
             else:
                 print('Opção inválida.')
 
@@ -910,7 +974,7 @@ try:
             print('2 - Remédios')
             print('3 - Tratamentos')
             print('4 - Contatos de Emergência')
-
+            print('5 - Voltar para o menu principal')
             escolha = input('\nEscolha uma opção: ')
 
             if escolha == '1':
@@ -921,11 +985,13 @@ try:
                 excluir_remedio(conexao)
 
             elif escolha == '3':
-                id_tratamento = input("ID do tratamento: ")
-                excluir_tratamento(conexao, id_tratamento)
+                excluir_tratamento(conexao)
 
             elif escolha == '4':
                 excluir_contatoemergencia(conexao)
+
+            elif escolha == '5':
+                continue
 
             else:
                 print('Opção inválida.')
