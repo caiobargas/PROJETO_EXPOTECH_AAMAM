@@ -1,12 +1,14 @@
+
 import mysql.connector
 from mysql.connector import Error
 from datetime import datetime
 from conexao import conectar, fechar_conexao
-
+import re
 
 # =========================
 # USUÁRIOS
 # =========================
+
 
 def adicionar_usuario(conexao):
 
@@ -29,9 +31,10 @@ def adicionar_usuario(conexao):
             print("Data inválida, por favor inserir uma data válida")
 
     email_usuario = input("Digite o email do usuário: ").strip()
+    padrao = r'^[\w.-]+@[\w.-]+.\w+$'
 
-    if not email_usuario:
-        print("Email inválido.")
+    if not re.match(padrao, email_usuario):
+        print("E-mail inválido!")
         return
 
     data_cadastro_usuario = datetime.now().date()
@@ -65,6 +68,51 @@ def adicionar_usuario(conexao):
         print("Não foi possível cadastrar o usuário.")
 
 
+def adicionar_usuario_tratamento(conexao):
+    print("\n=== USUÁRIOS CADASTRADOS ===")
+    listar_usuarios(conexao)
+
+    id_usuario = input("\nDigite o ID do usuário: ").strip()
+
+    if not id_usuario.isdigit():
+        print("ID inválido.")
+        return
+
+    id_tratamento = input("Digite o ID do tratamento: ").strip()
+
+    if not id_tratamento.isdigit():
+        print("ID do tratamento inválido.")
+        return
+
+    cursor = conexao.cursor()
+
+    try:
+
+        cursor.execute(
+            """
+            UPDATE tratamentos
+            SET fk_tratamento_usuarios = %s
+            WHERE id_tratamento = %s
+            """,
+            (id_usuario, id_tratamento)
+        )
+
+        conexao.commit()
+
+        if cursor.rowcount == 0:
+            print("Usuário não encontrado.")
+        else:
+            print("Usuário vinculado ao tratamento com sucesso!")
+
+    except ValueError:
+        print("Digite apenas números inteiros para os IDs.")
+
+    except Exception as erro:
+        print(f"Erro ao associar usuário ao tratamento: {erro}")
+
+        cursor.close()
+
+
 def listar_usuarios(conexao):
     cursor = conexao.cursor(dictionary=True)
 
@@ -82,13 +130,13 @@ def listar_usuarios(conexao):
 
     for usuario in usuarios:
         print(
-            f"[{usuario['id_usuario']}] "
-            f"nome do usuário:  [{usuario['nome_usuario']}] "
-            f"/ data de nascimento do usuário:  {usuario['dt_nasc_usuario']}] "
-            f"/ email cadastrado do usuário:  [{usuario['email_usuario']}] "
-            f"/ data de cadastro do usuário:  [{usuario['data_cadastro_usuario']}] "
-            f"/ status do usuário:  [Ativo: {usuario['usuario_ativo']}] "
-            f"/ gênero do usuário:  [{usuario['genero_usuario']}]"
+            f"\n [{usuario['id_usuario']}]"
+            f"\n nome do usuário:  [{usuario['nome_usuario']}] "
+            f"\n data de nascimento do usuário:  [{usuario['dt_nasc_usuario']}] "
+            f"\n email cadastrado do usuário:  [{usuario['email_usuario']}] "
+            f"\n data de cadastro do usuário:  [{usuario['data_cadastro_usuario']}] "
+            f"\n status do usuário:  [Ativo: {usuario['usuario_ativo']}] "
+            f"\n gênero do usuário:  [{usuario['genero_usuario']}]\n"
         )
 
 
@@ -123,13 +171,13 @@ def listar_usuarios_tratamentos(conexao):
 
         for tratamento in resultados:
             print(f"""
-        ID Usuário: {tratamento[0]}
-        Nome Usuário: {tratamento[1]}
-        Nome Tratamento: {tratamento[2]}
-        Descrição: {tratamento[3]}
-        Tipo: {tratamento[4]}
-        Início: {tratamento[5]}
-        Duração: {tratamento[6]}
+        \n ID Usuário: {tratamento[0]}
+        \n Nome Usuário: {tratamento[1]}
+        \n Nome Tratamento: {tratamento[2]}
+        \n Descrição: {tratamento[3]}
+        \n Tipo: {tratamento[4]}
+        \n Início: {tratamento[5]}
+        \n Duração: {tratamento[6]}\n
         """)
 
     except mysql.connector.Error as erro:
@@ -162,10 +210,15 @@ def atualizar_usuario(conexao):
         return
 
     novo_email = input("Novo email: ").strip()
+    padrao = r'^[\w.-]+@[\w.-]+.\w+$'
+    if not re.match(padrao, novo_email):
+        print("E-mail inválido!")
+        return
 
     if not novo_email:
         print("Email inválido.")
         return
+
     usuario_ativo = input("O usuário continua ativo? [S/N]").strip().upper()
     usuario_ativo = 1 if usuario_ativo == 'S' else 0
 
@@ -276,12 +329,12 @@ def listar_contatoemergencia(conexao):
         print("Nenhum contato de emergência cadastrado no momento.")
         return
     for contato in contatos:
-        print(f"[{contato['id_contato']}] "
-              f"nome do contato:  [{contato['nome_contato']}] "
-              f"/ telefone do contato:  [{contato['telefone_contato']}] - "
-              f"/ parentesco:  [{contato['parentesco']}] "
-              f"/ nome do usuário:  [{contato['nome_usuario']}] "
-              f"/ ID do usuário:  {contato['id_usuario']}"
+        print(f"\n [{contato['id_contato']}] "
+              f"\n nome do contato:  [{contato['nome_contato']}] "
+              f"\n telefone do contato:  [{contato['telefone_contato']}] - "
+              f"\n parentesco:  [{contato['parentesco']}] "
+              f"\n nome do usuário:  [{contato['nome_usuario']}] "
+              f"\n ID do usuário:  {contato['id_usuario']}\n "
               )
 
 
@@ -480,12 +533,12 @@ def listar_remedio(conexao):
         return
     for remedio in remedios:
         print(
-            f"[{remedio['id_remedio']}] "
-            f"Nome remédio:  [{remedio['nome_remedio']}] "
-            f"/  Descrição do remédio:  [{remedio['descricao_remedio']}] "
-            f"/  Dosagem Recomenda do remédio:  [{remedio['dosagem_remedio']}] "
-            f"/  Horário do remédio:  [{remedio['horario_remedio']}]"
-            f"/  Tipo do remédio:  [{remedio['tipo_remedio']}]"
+            f"\n [{remedio['id_remedio']}] "
+            f"\n Nome remédio:  [{remedio['nome_remedio']}] "
+            f"\n Descrição do remédio:  [{remedio['descricao_remedio']}] "
+            f"\n Dosagem Recomenda do remédio:  [{remedio['dosagem_remedio']}] "
+            f"\n Horário do remédio:  [{remedio['horario_remedio']}]"
+            f"\n Tipo do remédio:  [{remedio['tipo_remedio']}] \n"
         )
 
 
@@ -686,13 +739,13 @@ def listar_tratamentos(conexao):
 
     for tratamento in tratamentos:
         print(
-            f"[{tratamento['id_tratamento']}] "
-            f"nome do tratamento:  [{tratamento['nome_tratamento']}] "
-            f"/ tipo do tratamento:  [{tratamento['tipo_tratamento']}] "
-            f"/ data de início:  [{tratamento['inicio_tratamento']}] "
-            f"/ descrição do tratamento:  [{tratamento['descricao_tratamento']}] "
-            f"/ duração do tratamento:  [{tratamento['duracao_tratamento']}] "
-            f"/ remédio:  {tratamento['nome_remedio']}"
+            f"\n [{tratamento['id_tratamento']}] "
+            f"\n nome do tratamento:  [{tratamento['nome_tratamento']}] "
+            f"\n tipo do tratamento:  [{tratamento['tipo_tratamento']}] "
+            f"\n data de início:  [{tratamento['inicio_tratamento']}] "
+            f"\n descrição do tratamento:  [{tratamento['descricao_tratamento']}] "
+            f"\n duração do tratamento:  [{tratamento['duracao_tratamento']}] "
+            f"\n remédio:  {tratamento['nome_remedio']} \n"
         )
 
 
@@ -908,10 +961,11 @@ try:
 
             print('\n===== ADICIONAR =====')
             print('1 - Usuários')
-            print('2 - Remédios')
-            print('3 - Tratamentos')
-            print('4 - Contatos de Emergência')
-            print('5 - Voltar para o menu principal')
+            print('2 - Usuário em Tratamento')
+            print('3 - Remédios')
+            print('4 - Tratamentos')
+            print('5 - Contatos de Emergência')
+            print('6 - Voltar para o menu principal')
 
             escolha = input('\nEscolha uma opção: ')
 
@@ -919,15 +973,18 @@ try:
                 adicionar_usuario(conexao)
 
             elif escolha == '2':
-                adicionar_remedio(conexao)
+                adicionar_usuario_tratamento(conexao)
 
             elif escolha == '3':
-                adicionar_tratamento(conexao)
+                adicionar_remedio(conexao)
 
             elif escolha == '4':
-                adicionar_contatoemergencia(conexao)
+                adicionar_tratamento(conexao)
 
             elif escolha == '5':
+                adicionar_contatoemergencia(conexao)
+
+            elif escolha == '6':
                 continue
 
             else:
