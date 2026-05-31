@@ -402,7 +402,6 @@ def excluir_contatoemergencia(conexao):
 
     cursor = conexao.cursor()
 
-    # Lista os contatos cadastrados
     cursor.execute("""
         SELECT contato_emergencia.id_contato, contato_emergencia.nome_contato, contato_emergencia.parentesco, 
                 usuarios.id_usuario, usuarios.nome_usuario
@@ -422,10 +421,8 @@ def excluir_contatoemergencia(conexao):
         print(
             f"ID: {contato[0]} - Nome: {contato[1]} - Parentesco: {contato[2]} - Usuário: {contato[4]} (ID: {contato[3]})")
 
-    # Solicita o ID do contato
     id_contato = int(input("\nDigite o ID do contato que deseja excluir: "))
 
-    # Verifica se existe usuário vinculado ao contato
     cursor.execute("""
         SELECT fk_ce_usuario
         FROM contato_emergencia
@@ -438,13 +435,11 @@ def excluir_contatoemergencia(conexao):
         print("Contato não encontrado.")
         return
 
-    # Se houver usuário vinculado, não permite excluir
     if resultado[0] is not None:
         print("Não é possível excluir este contato.")
         print("Existe um usuário vinculado a este contato de emergência.")
         return
 
-    # Exclui o contato
     try:
         cursor.execute("""
             DELETE FROM contato_emergencia
@@ -832,7 +827,6 @@ def excluir_tratamento(conexao):
 
     cursor = conexao.cursor()
 
-    # Lista os tratamentos cadastrados
     cursor.execute("""
         SELECT tratamentos.id_tratamento, tratamentos.nome_tratamento, tratamentos.tipo_tratamento, 
                 remedios.id_remedio, remedios.nome_remedio
@@ -852,11 +846,9 @@ def excluir_tratamento(conexao):
         print(
             f"ID: {tratamento[0]} - Nome: {tratamento[1]} - Tipo: {tratamento[2]} - Remédio: {tratamento[4]} (ID: {tratamento[3]})")
 
-    # Solicita o ID do tratamento
     id_tratamento = int(
         input("\nDigite o ID do tratamento que deseja excluir: "))
 
-    # Verifica se existe remédio vinculado ao tratamento
     cursor.execute("""
         SELECT fk_tratamento_remedios, fk_tratamento_usuarios
         FROM tratamentos
@@ -869,13 +861,11 @@ def excluir_tratamento(conexao):
         print("Tratamento não encontrado.")
         return
 
-    # Se houver remédio ou usuário vinculado, não permite excluir
     if resultado[0] is not None or resultado[1] is not None:
         print("Não é possível excluir este tratamento.")
         print("Existe um remédio ou um usuário vinculado a este tratamento.")
         return
 
-    # Exclui o tratamento
     try:
         cursor.execute("""
             DELETE FROM tratamentos
